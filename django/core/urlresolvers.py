@@ -483,7 +483,7 @@ def reverse(viewname, urlconf=None, args=None, kwargs=None, prefix=None, current
 
                 ### FIXME: Foi preciso fazer essa mudanca devido a estrutura de
                 # urls que utilizamos
-                from doisxt.lib.django.middleware import threadlocals
+                from lib.django_.middleware import threadlocals
                 extra = extra.replace(
                     '([a-z0-9_%]*)',
                     threadlocals.get_current_agencia())
@@ -504,7 +504,7 @@ def reverse(viewname, urlconf=None, args=None, kwargs=None, prefix=None, current
 
     ### FIXME: Foi preciso fazer essa mudanca devido a estrutura de urls que
     # utilizamos
-    from doisxt.lib.django.middleware import threadlocals
+    from lib.django_.middleware import threadlocals
 
     uri = \
         iri_to_uri(resolver._reverse_with_prefix(view, prefix, *args, **kwargs))
