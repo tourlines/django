@@ -480,6 +480,15 @@ def reverse(viewname, urlconf=None, args=None, kwargs=None, prefix=None, current
 
             try:
                 extra, resolver = resolver.namespace_dict[ns]
+
+                ### FIXME: Foi preciso fazer essa mudanca devido a estrutura de
+                # urls que utilizamos
+                from doisxt.lib.django.middleware import threadlocals
+                extra = extra.replace(
+                    '([a-z0-9_%]*)',
+                    threadlocals.get_current_agencia())
+                ### Fim da personalização
+
                 resolved_path.append(ns)
                 ns_pattern = ns_pattern + extra
             except KeyError as key:
@@ -493,7 +502,19 @@ def reverse(viewname, urlconf=None, args=None, kwargs=None, prefix=None, current
         if ns_pattern:
             resolver = get_ns_resolver(ns_pattern, resolver)
 
-    return iri_to_uri(resolver._reverse_with_prefix(view, prefix, *args, **kwargs))
+    ### FIXME: Foi preciso fazer essa mudanca devido a estrutura de urls que
+    # utilizamos
+    from doisxt.lib.django.middleware import threadlocals
+
+    uri = \
+        iri_to_uri(resolver._reverse_with_prefix(view, prefix, *args, **kwargs))
+    agencia_atual = threadlocals.get_current_agencia()
+
+    if uri and not uri.startswith('/%s/' % agencia_atual):
+        uri = '/%s%s' % (agencia_atual, uri)
+
+    return uri
+    ### Fim da personalização
 
 reverse_lazy = lazy(reverse, str)
 
